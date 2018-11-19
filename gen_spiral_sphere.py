@@ -59,5 +59,8 @@ bm.faces.new([bottom, prev_ring[0], prev_prev_last])
 for s in range(segments - 1):
     bm.faces.new([bottom, prev_ring[s+1], prev_ring[s]])
 
+for v in bm.verts:
+    v.co *= size
+
 bm.to_mesh(mesh)
 bm.free()
