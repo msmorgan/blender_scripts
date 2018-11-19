@@ -3,8 +3,8 @@ import bpy
 import math
 import mathutils
 
-segments = 32
 ring_count = 16
+segments = ring_count * 2
 size = 1.0
 
 scene = bpy.context.scene
@@ -30,8 +30,8 @@ for r in range(ring_count):
         xy_theta = s * 2 * math.pi / segments
         z_theta = r * math.pi / ring_count
 
-        x = math.sin(xy_theta) * math.sin(z_theta)
-        y = math.cos(xy_theta) * math.sin(z_theta)
+        x = math.cos(xy_theta) * math.sin(z_theta)
+        y = math.sin(xy_theta) * math.sin(z_theta)
         z = math.cos(z_theta)
 
         vert = bm.verts.new((x, y, z))
@@ -40,9 +40,9 @@ for r in range(ring_count):
     for s in range(segments):
         next_s = (s + 1) % segments
         if r == 0:
-            bm.faces.new([ring[next_s], ring[s], top])
+            bm.faces.new([ring[s], ring[next_s], top])
         else:
-            bm.faces.new([ring[next_s], ring[s], prev_ring[s], prev_ring[next_s]])
+            bm.faces.new([ring[s], ring[next_s], prev_ring[next_s], prev_ring[s]])
 
     prev_ring = ring
 
@@ -50,7 +50,7 @@ bottom = bm.verts.new((0.0, 0.0, -1.0))
 
 for s in range(segments):
     next_s = (s + 1) % segments
-    bm.faces.new([bottom, prev_ring[s], prev_ring[next_s]])
+    bm.faces.new([bottom, prev_ring[next_s], prev_ring[s]])
 
 bm.to_mesh(mesh)
 bm.free()
