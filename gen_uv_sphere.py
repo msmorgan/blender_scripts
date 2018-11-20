@@ -52,6 +52,29 @@ for s in range(segments):
     next_s = (s + 1) % segments
     bm.faces.new([bottom, prev_ring[next_s], prev_ring[s]])
 
+bm.verts.ensure_lookup_table()
+bm.verts.index_update()
+
+uv_layer = bm.loops.layers.uv.new()
+for face in bm.faces:
+    safe = False
+    for l in range(len(face.loops)):
+        loop = face.loops[l]
+        x, y, z = loop.vert.co
+
+        u = math.atan2(y, x) / (2 * math.pi)
+        if u < 0.0:
+            u += 1.0
+
+        v = -math.acos(z) / math.pi
+
+        if l == 0 and u == 0:
+            safe = True
+        if u == 0.0 and not safe:
+            u = 1.0
+
+        loop[uv_layer].uv = mathutils.Vector((u, v))
+
 for v in bm.verts:
     v.co *= size
 
